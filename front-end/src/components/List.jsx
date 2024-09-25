@@ -1,17 +1,25 @@
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { peopleQueryOptions } from "../queries/peopleQueryOptions";
 import "./List.css";
 
-export const List = () => {
-    const [people, setPeople] = useState([
-        { id: 1, name: "Alice", email: "alice@example.com", age: 25 },
-        { id: 2, name: "Bob", email: "bob@example.com", age: 30 },
-    ]);
+export const List = ({ onPersonSelect }) => {
+  const { data: people, isPending, isError } = useQuery(peopleQueryOptions);
 
-    return (
-        <ul>
-            {people?.map((person) => (
-                <li key={person.id}>{person.name}</li>
-            ))}
-        </ul>
-    );
+  if (isPending) {
+    return <p>Ładowanie</p>;
+  }
+
+  if (isError) {
+    return <p>Błąd</p>;
+  }
+
+  return (
+    <ul>
+      {people?.map((person) => (
+        <li key={person.id} onClick={() => onPersonSelect(person.id)}>
+          {person.name}
+        </li>
+      ))}
+    </ul>
+  );
 };
